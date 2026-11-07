@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>9.0</LangVersion>
+		<Platforms>AnyCPU;x64</Platforms>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<OutputType>Library</OutputType>
+		<AssemblyName>SheetLayoutDistributor</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Системные и WPF-сборки, необходимые для AdWindows.dll -->
+		<Reference Include="System">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.Drawing">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.Xml">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.Xaml">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="WindowsBase">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PresentationCore">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="PresentationFramework">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.Windows.Forms">
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="WindowsFormsIntegration">
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- AutoCAD 2020 -->
+		<!-- Убедитесь, что пути к DLL корректны для вашей установки AutoCAD 2020 -->
+		<Reference Include="accoremgd">
+			<HintPath>D:\Program Files\AutoCAD\AutoCAD 2020\accoremgd.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Acdbmgd">
+			<HintPath>D:\Program Files\AutoCAD\AutoCAD 2020\acdbmgd.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Acmgd">
+			<HintPath>D:\Program Files\AutoCAD\AutoCAD 2020\acmgd.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="AcTcMgd">
+			<HintPath>D:\Program Files\AutoCAD\AutoCAD 2020\AcTcMgd.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="AdWindows">
+			<HintPath>D:\Program Files\AutoCAD\AutoCAD 2020\AdWindows.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+</Project>

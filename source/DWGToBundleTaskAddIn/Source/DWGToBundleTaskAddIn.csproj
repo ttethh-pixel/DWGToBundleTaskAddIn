@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DWGToBundleTaskAddIn</AssemblyName>
+    <RootNamespace>DWGToBundleTaskAddIn</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ProvideBindingRedirectsForMscorlib>false</ProvideBindingRedirectsForMscorlib>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Tests\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EPDM.Interop.epdm">
+      <HintPath>C:\Program Files\SOLIDWORKS PDM\EPDM.Interop.epdm.dll</HintPath>
+      <Private>false</Private>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\dwg2pdf.bat">
+      <LogicalName>DWGToBundleTaskAddIn.Resources.dwg2pdf.bat</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SheetLayoutDistributor.dll">
+      <LogicalName>DWGToBundleTaskAddIn.Resources.SheetLayoutDistributor.dll</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
