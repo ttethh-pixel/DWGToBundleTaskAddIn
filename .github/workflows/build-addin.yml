@@ -51,8 +51,12 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $lines = foreach ($line in Get-Content SHA256SUMS.txt -Encoding UTF8) {
             $file = ($line -split '  ', 2)[1]
-            $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
-            "$hash  $file"
+            if ($file -eq 'runtime/DWGToBundleTaskAddIn.dll') {
+              $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
+              "$hash  $file"
+            } else {
+              $line
+            }
           }
           $utf8 = New-Object System.Text.UTF8Encoding($false)
           [IO.File]::WriteAllText((Join-Path $PWD 'SHA256SUMS.txt'), (($lines -join "`n") + "`n"), $utf8)
