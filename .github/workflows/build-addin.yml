@@ -22,6 +22,9 @@ jobs:
     runs-on: windows-2022
     timeout-minutes: 15
     steps:
+      - name: Preserve repository line endings
+        shell: cmd
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@v6
       - name: Compile .NET Framework add-in
         shell: cmd
