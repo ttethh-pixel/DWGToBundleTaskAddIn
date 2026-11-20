@@ -1,0 +1,71 @@
+name: Build add-in DLL
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'source/DWGToBundleTaskAddIn/Source/**'
+      - 'runtime/EPDM.Interop.epdm.dll'
+      - 'VERSION'
+      - '.github/workflows/build-addin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-addin-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Compile .NET Framework add-in
+        shell: cmd
+        run: call source\DWGToBundleTaskAddIn\Source\build.cmd
+      - name: Verify version and embedded resources
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dll = Resolve-Path 'source/DWGToBundleTaskAddIn/Source/bin/DWGToBundleTaskAddIn.dll'
+          $expected = (Get-Content VERSION -Raw).Trim()
+          $actual = [Diagnostics.FileVersionInfo]::GetVersionInfo($dll).FileVersion
+          if ($actual -ne $expected) { throw "FileVersion $actual does not match VERSION $expected" }
+          $assembly = [Reflection.Assembly]::LoadFile($dll)
+          $resources = $assembly.GetManifestResourceNames()
+          foreach ($name in @('dwg2pdf.bat', 'SheetLayoutDistributor.dll')) {
+            if ($resources -notcontains "DWGToBundleTaskAddIn.Resources.$name") {
+              throw "Missing embedded resource: $name"
+            }
+          }
+          Copy-Item $dll 'runtime/DWGToBundleTaskAddIn.dll' -Force
+      - name: Update checksums and commit DLL
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $lines = foreach ($line in Get-Content SHA256SUMS.txt -Encoding UTF8) {
+            $file = ($line -split '  ', 2)[1]
+            $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $file"
+          }
+          $utf8 = New-Object System.Text.UTF8Encoding($false)
+          [IO.File]::WriteAllText((Join-Path $PWD 'SHA256SUMS.txt'), (($lines -join "`n") + "`n"), $utf8)
+          git add runtime/DWGToBundleTaskAddIn.dll SHA256SUMS.txt
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { exit 0 }
+          if ($LASTEXITCODE -ne 1) { throw 'Cannot inspect staged changes' }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          $version = (Get-Content VERSION -Raw).Trim()
+          git commit -m "Build add-in DLL $version"
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot commit compiled DLL' }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot push compiled DLL' }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: DWGToBundleTaskAddIn
+          path: runtime/DWGToBundleTaskAddIn.dll
+          if-no-files-found: error

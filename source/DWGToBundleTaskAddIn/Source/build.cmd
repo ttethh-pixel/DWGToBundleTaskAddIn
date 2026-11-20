@@ -7,6 +7,8 @@ set "ROOT=%~dp0"
 set "FW=%WINDIR%\Microsoft.NET\Framework64\v4.0.30319"
 set "CSC=%FW%\csc.exe"
 set "EPDM=C:\Program Files\SOLIDWORKS PDM\EPDM.Interop.epdm.dll"
+if not exist "%EPDM%" set "EPDM=%ROOT%..\..\..\runtime\EPDM.Interop.epdm.dll"
+if not exist "%EPDM%" (echo [ERROR] missing EPDM.Interop.epdm.dll & exit /b 2)
 set "OUT=%ROOT%bin\DWGToBundleTaskAddIn.dll"
 set "RSP=%TEMP%\dwg2pdm_build.rsp"
 

@@ -28,17 +28,6 @@ namespace DWGToBundleTaskAddIn
                 poInfo.mlRequiredVersionMajor = 10;
                 poInfo.mlRequiredVersionMinor = 0;
 
-                // Команда ручного запуска. Один и тот же AddCmd служит и для пункта
-                // контекстного меню, и для кнопки на карточке (Card Editor привязывает
-                // кнопку к этой команде). Клик по кнопке карточки приходит как
-                // EdmCmd_CardButton и выполняет ту же конвертацию.
-                poCmdMgr.AddHook(EdmCmdType.EdmCmd_Menu);
-                poCmdMgr.AddHook(EdmCmdType.EdmCmd_CardButton);
-                int menuFlags = (int)EdmMenuFlags.EdmMenu_ContextMenuItem
-                              | (int)EdmMenuFlags.EdmMenu_ContextMenuItemFolder;
-                poCmdMgr.AddCmd(MenuCmdId, "Конвертировать DWG в PDF", menuFlags,
-                    "Ручной запуск: выбранные DWG/DXF -> ч/б PDF (движок встроен в DLL)", "DWG -> PDF", 0, 0);
-
                 poCmdMgr.AddHook(EdmCmdType.EdmCmd_TaskRun);
                 poCmdMgr.AddHook(EdmCmdType.EdmCmd_TaskSetup);
                 poCmdMgr.AddHook(EdmCmdType.EdmCmd_TaskSetupButton);
@@ -53,16 +42,6 @@ namespace DWGToBundleTaskAddIn
             {
                 switch (poCmd.meCmdType)
                 {
-                    case EdmCmdType.EdmCmd_Menu:
-                        if (poCmd.mlCmdID == MenuCmdId)
-                            new BundleTaskExecutor(poCmd.mpoVault as IEdmVault5).OnMenuRun(ref poCmd, ref ppoData);
-                        break;
-                    case EdmCmdType.EdmCmd_CardButton:
-                        // Кнопка на карточке файла: конвертируем файл карточки теми же
-                        // значениями по умолчанию, что и ручной запуск из меню.
-                        if (poCmd.mlCmdID == MenuCmdId)
-                            new BundleTaskExecutor(poCmd.mpoVault as IEdmVault5).OnMenuRun(ref poCmd, ref ppoData);
-                        break;
                     case EdmCmdType.EdmCmd_TaskRun:
                         new BundleTaskExecutor(poCmd.mpoVault as IEdmVault5).OnTaskRun(ref poCmd, ref ppoData);
                         break;
